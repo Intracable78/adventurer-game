@@ -7,31 +7,39 @@ let actualXPosition =  ref<number>(0);
 let actualYPosition = ref<number>(0);
 let error = ref<string>();
 
+//chargement des datas du parcours, on retourne le tableau à deux dimmensions qu'on à créé
+
 async function loadMapData() {
   const response: Response = await fetch('src/maps/carte.txt')
-  const responseText : string = await response.text()
-
-  if(response.status === 200)
+  
+  if(response.status === 200) {
+    const responseText : string = await response.text()
     return responseText.split('\n').map(row => row.split(''))
+  }
+
   else
     error.value = response.statusText
 }
 
-
+// chargement des datas de la postition X & Y de l'abenturier ainsi que des directions à emprunter
 async function loadFileMouvements() {
  const response : Response = await fetch('src/maps/mouvements.txt');
+ if(response.status === 200) {
  const splitedData = (await response.text()).split('\n');
-
- if(response.status === 200) 
   setDataPosition(parseInt(splitedData[0].split(',')[0]), parseInt(splitedData[0].split(',')[1]),splitedData[1])
+}
   else
     error.value = response.statusText
 }
+
+// on set les positions récupérées dans la fonction précédentes
 
 function setDataPosition(posX : number, posY : number, directions : string) {
   [startXPosition, startYPosition,directionsAdventurer.value] = [posX, posY, directions];
   deplacingAdventurer(startXPosition, startYPosition)
 }
+
+// on parcourt toutes les positions, afin de set X & Y sur la map
 
 function deplacingAdventurer(startXPosition : number, startYPosition: number ) {
 
@@ -54,9 +62,10 @@ for(const direction of directionsAdventurer.value) {
       break;
   }
 }
-
-
 }
+
+
+// fonction de lancement du programme
 
 async function main() {
   try {
@@ -64,16 +73,11 @@ async function main() {
 
     await loadFileMouvements();
 
-    
-
-
-    if(actualXPosition.value < 0 || actualYPosition.value < 0 || arrayMap[actualYPosition.value][actualXPosition.value] === '#'){
-      error.value = "L'aventurier se trouve sur une case invalide, veuillez modifier ses directions";
-     
+    if(actualXPosition.value < 0 || actualYPosition.value < 0 || arrayMap[actualYPosition.value][actualXPosition.value] === '#' || actualYPosition.value > arrayMap.length || actualXPosition.value > arrayMap[actualYPosition.value].length){
+      error.value = "L'aventurier se trouve sur une case invalide, veuillez modifier ses directions ou ses coordonnées de départ";
       return;
     }
       
-   
       arrayMap[actualYPosition.value][actualXPosition.value] = '🧑'; 
       const mapDisplay : HTMLElement | null  = document.getElementById('map');
       

@@ -7,7 +7,7 @@ let actualXPosition =  ref<number>(0);
 let actualYPosition = ref<number>(0);
 let error = ref<string>();
 
-//chargement des datas du parcours, on retourne le tableau à deux dimmensions qu'on à créé
+//chargement des datas du parcours, on retourne un tableau à deux dimmensions
 
 async function loadMapData() {
   const response: Response = await fetch('src/maps/carte.txt')
@@ -32,7 +32,7 @@ async function loadFileMouvements() {
     error.value = response.statusText
 }
 
-// on set les positions récupérées dans la fonction précédentes
+// on set les positions récupérées dans la fonction précédente
 
 function setDataPosition(posX : number, posY : number, directions : string) {
   [startXPosition, startYPosition,directionsAdventurer.value] = [posX, posY, directions];
